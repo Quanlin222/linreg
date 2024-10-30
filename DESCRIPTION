@@ -11,12 +11,16 @@ License: GPL-3
 RoxygenNote: 7.3.2
 Imports:
     ggplot2,
-    MASS
+    MASS,
+    dplyr,
+    methods
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+
+
 
 

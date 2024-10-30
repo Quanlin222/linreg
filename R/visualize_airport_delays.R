@@ -3,6 +3,11 @@ library(nycflights13)
 library(dplyr)
 library(ggplot2)
 
+# Declare global variables and functions to avoid NOTE in R CMD CHECK
+globalVariables(c("flights", "arr_delay", "dest", "mean_delay", "airports", "lon", "lat",
+                  "%>%", "filter", "group_by", "summarise", "left_join",
+                  "ggplot", "aes", "geom_point", "scale_size_continuous", "labs", "theme_minimal"))
+
 # Function to calculate average airport delays
 calculate_airport_delays <- function() {
   airport_delays <- flights %>%
