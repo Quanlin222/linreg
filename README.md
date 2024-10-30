@@ -20,19 +20,19 @@ library(linreg)
 
 data(iris)
 
-lin_obj <- linreg(Petal.Length ~ Sepal.Width + Sepal.Length, data = iris)
+my_ridgereg <- ridgereg_fit(Petal.Length ~ Species, data = iris, lambda = 0.1)
 
 ## 1.4 Run the ridgereg() function
 
 ### 1.4.1 Print out the coefficients and coefficient names:
 
-print(lin_obj)
+my_ridgereg$print()
 
 ### 1.4.2 The predicted values y_hat:
 
-predict(lin_obj)
+my_ridgereg$predict()
 
 
 ### 1.4.3 The coefficients as a named vector:
 
-coef(lin_obj)
+my_ridgereg$coef()
