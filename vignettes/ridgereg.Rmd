@@ -1,0 +1,137 @@
+---
+title: "ridgereg"
+author: "Quanlin Ren, Qinxia Zhang"
+date: "2024-10-30"
+output: 
+  rmarkdown::html_vignette:  
+    toc: true
+    number_sections: true
+
+vignette: >
+  %\VignetteIndexEntry{ridgereg}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+This vignette demonstrates how to use the `ridgereg()` function to perform ridge regression on the Boston Housing dataset using the `caret` package for model training and evaluation.
+
+# Loading Required Libraries
+
+
+library(mlbench)
+
+library(caret)
+
+library(linreg)  
+
+# Load the Boston Housing dataset
+
+data("BostonHousing")
+
+boston_data <- BostonHousing
+
+# Split the Data into Training and Test Sets
+
+## Set seed for reproducibility
+
+set.seed(123)
+
+## Create a train-test split
+
+train_index <- createDataPartition(boston_data$medv, p = 0.8, list = FALSE)
+
+train_data <- boston_data[train_index, ]
+
+test_data <- boston_data[-train_index, ]
+
+## Check the dimensions of the training and test sets
+
+dim(train_data)
+
+dim(test_data)
+
+# Fit a linear regression model
+
+lm_model <- train(medv ~ ., data = train_data, method = "lm")
+
+summary(lm_model)
+
+# Fit a linear regression model with forward selection
+
+ctrl <- trainControl(method = "cv", number = 10)
+
+# Use the `leapSeq` method for forward selection
+
+forward_model <- train(medv ~ ., data = train_data, method = "leapSeq", trControl = ctrl)
+
+summary(forward_model)
+
+# Evaluate the Performance of the Linear Models on the Training Dataset
+
+## Predictions and performance evaluation for linear model
+
+lm_predictions <- predict(lm_model, train_data)
+
+lm_rmse <- RMSE(lm_predictions, train_data$medv)
+
+## Predictions and performance evaluation for forward selection model
+
+forward_predictions <- predict(forward_model, train_data)
+
+forward_rmse <- RMSE(forward_predictions, train_data$medv)
+
+lm_rmse
+
+forward_rmse
+
+# Fit a Ridge Regression Model Using ridgereg()
+
+## Define a grid of lambda values for tuning
+
+lambda_grid <- expand.grid(lambda = seq(0, 1, by = 0.1))
+
+## Fit the ridge regression model
+
+ridge_model <- train(medv ~ ., data = train_data, method = "ridgereg", tuneGrid = lambda_grid, trControl = ctrl)
+print(ridge_model)
+
+# Find the Best Hyperparameter Value for λ Using 10-Fold Cross-Validation
+
+## Best lambda value
+
+best_lambda <- ridge_model$bestTune
+
+best_lambda
+
+# Evaluate the Performance of All Models on the Test Dataset
+
+## Predictions for the test dataset
+lm_test_predictions <- predict(lm_model, test_data)
+forward_test_predictions <- predict(forward_model, test_data)
+ridge_test_predictions <- predict(ridge_model, test_data)
+
+## Calculate RMSE for test dataset
+
+lm_test_rmse <- RMSE(lm_test_predictions, test_data$medv)
+
+forward_test_rmse <- RMSE(forward_test_predictions, test_data$medv)
+
+ridge_test_rmse <- RMSE(ridge_test_predictions, test_data$medv)
+
+lm_test_rmse
+
+forward_test_rmse
+
+ridge_test_rmse
+
+# Conclusion
+In this vignette, we successfully demonstrated how to fit linear regression models and a ridge regression model using the ridgereg() function. We evaluated the performance of all models on both the training and test datasets.
+
+The results indicate that the ridge regression model outperformed the standard linear regression models, particularly in terms of root mean squared error (RMSE) on the test dataset. The regularization provided by ridge regression helped mitigate the effects of multicollinearity among predictors, leading to more stable coefficient estimates and improved prediction accuracy.
+
+Specifically, the forward selection model, while useful for identifying significant predictors, did not perform as well as ridge regression when tested on unseen data. This highlights the importance of regularization techniques like ridge regression, which can handle situations where there are many correlated features, thus reducing overfitting and improving generalization to new data.
+
+Overall, the findings suggest that incorporating regularization can significantly enhance model performance in cases where multicollinearity is a concern or when the number of predictors is large relative to the number of observations.
+

@@ -1,0 +1,22 @@
+Encoding: UTF-8
+Package: linreg
+Type: Package
+Title: Linear Regression Function
+Version: 1.0
+Date: 2024-10-29
+Author: Quanlin Ren, Qinxia Zhang
+Maintainer: Quanlin Ren <renqu711@student.liu.se>
+Description: The linreg package provides functionality for performing multiple linear regression and ridge regression using ordinary least squares. It includes methods for statistical analysis and model evaluation, designed to handle multicollinearity and datasets with high dimensionality. Functions return RC objects containing regression coefficients, fitted values, and other model diagnostics. Additionally, visualization tools enable easy plotting of model results, while comprehensive documentation and unit tests ensure ease of use and reliability. Ridge regression hyperparameters are tunable, allowing for efficient model optimization and prediction.
+License: GPL-3
+RoxygenNote: 7.3.2
+Imports:
+    ggplot2,
+    MASS
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+
+
