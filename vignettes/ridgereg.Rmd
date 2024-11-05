@@ -19,65 +19,84 @@ This vignette demonstrates how to use the `ridgereg()` function to perform ridge
 
 # Loading Required Libraries
 
-
+```r
 library(mlbench)
 
 library(caret)
 
 library(linreg)  
+```
 
 # Load the Boston Housing dataset
 
+```r
 data("BostonHousing")
 
 boston_data <- BostonHousing
+```
 
 # Split the Data into Training and Test Sets
 
 ## Set seed for reproducibility
 
+```r
 set.seed(123)
+
+```
 
 ## Create a train-test split
 
+```r
 train_index <- createDataPartition(boston_data$medv, p = 0.8, list = FALSE)
 
 train_data <- boston_data[train_index, ]
 
 test_data <- boston_data[-train_index, ]
+```
 
 ## Check the dimensions of the training and test sets
 
+```r
 dim(train_data)
 
 dim(test_data)
+```
 
 # Fit a linear regression model
 
+```r
 lm_model <- train(medv ~ ., data = train_data, method = "lm")
 
 summary(lm_model)
+```
 
 # Fit a linear regression model with forward selection
 
+```r
 ctrl <- trainControl(method = "cv", number = 10)
+```
 
 # Use the `leapSeq` method for forward selection
 
+```r
 forward_model <- train(medv ~ ., data = train_data, method = "leapSeq", trControl = ctrl)
 
 summary(forward_model)
+```
 
 # Evaluate the Performance of the Linear Models on the Training Dataset
 
 ## Predictions and performance evaluation for linear model
 
+```r
 lm_predictions <- predict(lm_model, train_data)
 
 lm_rmse <- RMSE(lm_predictions, train_data$medv)
+```
 
 ## Predictions and performance evaluation for forward selection model
 
+```r
 forward_predictions <- predict(forward_model, train_data)
 
 forward_rmse <- RMSE(forward_predictions, train_data$medv)
@@ -85,35 +104,46 @@ forward_rmse <- RMSE(forward_predictions, train_data$medv)
 lm_rmse
 
 forward_rmse
+```
 
 # Fit a Ridge Regression Model Using ridgereg()
 
 ## Define a grid of lambda values for tuning
 
+```r
 lambda_grid <- expand.grid(lambda = seq(0, 1, by = 0.1))
+```
 
 ## Fit the ridge regression model
 
+```r
 ridge_model <- train(medv ~ ., data = train_data, method = "ridgereg", tuneGrid = lambda_grid, trControl = ctrl)
 print(ridge_model)
+```
 
 # Find the Best Hyperparameter Value for λ Using 10-Fold Cross-Validation
 
 ## Best lambda value
 
+```r
 best_lambda <- ridge_model$bestTune
 
 best_lambda
+```
 
 # Evaluate the Performance of All Models on the Test Dataset
 
 ## Predictions for the test dataset
+
+```r
 lm_test_predictions <- predict(lm_model, test_data)
 forward_test_predictions <- predict(forward_model, test_data)
 ridge_test_predictions <- predict(ridge_model, test_data)
+```
 
 ## Calculate RMSE for test dataset
 
+```r
 lm_test_rmse <- RMSE(lm_test_predictions, test_data$medv)
 
 forward_test_rmse <- RMSE(forward_test_predictions, test_data$medv)
@@ -125,6 +155,7 @@ lm_test_rmse
 forward_test_rmse
 
 ridge_test_rmse
+```
 
 # Conclusion
 In this vignette, we successfully demonstrated how to fit linear regression models and a ridge regression model using the ridgereg() function. We evaluated the performance of all models on both the training and test datasets.
